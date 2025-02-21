@@ -1,5 +1,5 @@
 import express from "express";
-import db from "../db/connection.js";
+import { connectDB } from "../db/connection.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
@@ -7,7 +7,6 @@ import { ObjectId } from "mongodb";
 import transporter from "../util/mailer.js";
 
 const authRouter = express.Router();
-const userCollection = db.collection("users");
 
 /**
  * POST /auth/register
@@ -24,6 +23,8 @@ const userCollection = db.collection("users");
 authRouter.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    const db = await connectDB();
+    const userCollection = db.collection("users");
 
     // Check if username is already registered
     const existingUsername = await userCollection.findOne({ username });
@@ -99,6 +100,8 @@ authRouter.post("/register", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
+    const db = await connectDB();
+    const userCollection = db.collection("users");
 
     // Check if user exists
     const user = await userCollection.findOne({ username });
@@ -146,6 +149,8 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/verify-email", async (req, res) => {
   try {
     const { email, token } = req.body;
+    const db = await connectDB();
+    const userCollection = db.collection("users");
 
     // Check if user exists
     const user = await userCollection.findOne({ email });
@@ -186,6 +191,8 @@ authRouter.post("/verify-email", async (req, res) => {
 authRouter.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
+    const db = await connectDB();
+    const userCollection = db.collection("users");
 
     // Check if user exists
     const user = await userCollection.findOne({ email });
@@ -240,6 +247,8 @@ authRouter.post("/forgot-password", async (req, res) => {
 authRouter.post("/reset-password", async (req, res) => {
   try {
     const { token, password } = req.body;
+    const db = await connectDB();
+    const userCollection = db.collection("users");
 
     // Verify token to check user is authorised to reset the password
     jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
