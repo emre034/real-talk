@@ -1,116 +1,100 @@
 import axiosInstance from "./axios";
 
-//Logs in the given user
-async function loginUser(user) {
+/**
+ * Handle axios API errors.
+ *
+ * @param {Object} error The error object from axios.
+ * @returns {Object} An object with a success boolean and an error message.
+ */
+const handleError = (error) => {
+  if (error.response) {
+    // If error has a response, it means the request reached the backend but it
+    // sent back an error.
+    console.error("Backend error:", error);
+    const code = error.response.status;
+    const message = error.response.data.error;
+    return { success: false, error: `Status ${code}: ${message}` };
+  } else {
+    // Otherwise, it's an error with the request
+    console.error("Error:", error);
+    return { success: false, error: error };
+  }
+};
+
+export async function loginUser(username, password) {
   try {
-    //Makes a POST request to the "/users/login" endpoint. Auth stuff is usually POST because it's more secure.
-    const response = await axiosInstance.post("/auth/login", user);
-    //Log the response for debugging purposes and return the response
-    //The response should contain a token which we can use to authenticate the user on protected endpoints.
+    const response = await axiosInstance.post("/auth/login", {
+      username,
+      password,
+    });
     console.log(response);
     return response;
   } catch (error) {
-    if (error.response) {
-      //If error has a response, it means the request reached the backend but it sent back an error.
-      console.error("Backend error:", error);
-      const code = error.response.status;
-      const message = error.response.data.error;
-      return { success: false, error: `Status ${code}: ${message}` };
-    } else {
-      //Otherwise, it's an error with the request
-      console.error("Error:", error);
-      return { success: false, error: error };
-    }
+    return handleError(error);
   }
 }
 
-async function registerUser(user) {
+export async function registerUser(username, email, password) {
   try {
-    //Makes a POST request to the "/users/register" endpoint. Auth stuff is usually POST because it's more secure.
-    const response = await axiosInstance.post("/auth/register", user);
-    //Log the response for debugging purposes and return the response.
-    //Usually the response is the info of the newly registered user or maybe a token so they can be logged in immediately.
+    const response = await axiosInstance.post("/auth/register", {
+      username,
+      email,
+      password,
+    });
     console.log(response);
     return response;
   } catch (error) {
-    if (error.response) {
-      //If error has a response, it means the request reached the backend but it sent back an error.
-      console.error("Backend error:", error);
-      const code = error.response.status;
-      const message = error.response.data.error;
-      return { success: false, error: `Status ${code}: ${message}` };
-    } else {
-      //Otherwise, it's an error with the request
-      console.error("Error:", error);
-      return { success: false, error: error };
-    }
+    return handleError(error);
   }
 }
 
-async function sendResetEmail(user) {
+export async function sendResetEmail(email) {
   try {
-    //Makes a POST request to the "/users/register" endpoint. Auth stuff is usually POST because it's more secure.
-    const response = await axiosInstance.post("/auth/forgot-password", user);
-    //Log the response for debugging purposes and return the response.
+    const response = await axiosInstance.post("/auth/forgot-password", {
+      email,
+    });
     console.log(response);
     return response;
   } catch (error) {
-    if (error.response) {
-      //If error has a response, it means the request reached the backend but it sent back an error.
-      console.error("Backend error:", error);
-      const code = error.response.status;
-      const message = error.response.data.error;
-      return { success: false, error: `Status ${code}: ${message}` };
-    } else {
-      //Otherwise, it's an error with the request
-      console.error("Error:", error);
-      return { success: false, error: error };
-    }
+    return handleError(error);
   }
 }
 
-async function verifyEmail(user) {
+export async function verifyEmail(email, token) {
   try {
-    //Makes a POST request to the "/users/register" endpoint. Auth stuff is usually POST because it's more secure.
-    const response = await axiosInstance.post("/auth/verify-email", user);
-    //Log the response for debugging purposes and return the response.
+    const response = await axiosInstance.post("/auth/verify-email", {
+      email,
+      token,
+    });
     console.log(response);
     return response;
   } catch (error) {
-    if (error.response) {
-      //If error has a response, it means the request reached the backend but it sent back an error.
-      console.error("Backend error:", error);
-      const code = error.response.status;
-      const message = error.response.data.error;
-      return { success: false, error: `Status ${code}: ${message}` };
-    } else {
-      //Otherwise, it's an error with the request
-      console.error("Error:", error);
-      return { success: false, error: error };
-    }
+    return handleError(error);
   }
 }
 
-async function resetPassword(user) {
+export async function resetPassword(token, newPassword) {
   try {
-    //Makes a POST request to the "/users/register" endpoint. Auth stuff is usually POST because it's more secure.
-    const response = await axiosInstance.post("/auth/reset-password", user);
-    //Log the response for debugging purposes and return the response.
+    const response = await axiosInstance.post("/auth/reset-password", {
+      token,
+      password: newPassword,
+    });
     console.log(response);
     return response;
   } catch (error) {
-    if (error.response) {
-      //If error has a response, it means the request reached the backend but it sent back an error.
-      console.error("Backend error:", error);
-      const code = error.response.status;
-      const message = error.response.data.error;
-      return { success: false, error: `Status ${code}: ${message}` };
-    } else {
-      //Otherwise, it's an error with the request
-      console.error("Error:", error);
-      return { success: false, error: error };
-    }
+    return handleError(error);
   }
 }
 
-export { verifyEmail, sendResetEmail, loginUser, registerUser, resetPassword };
+export async function verifyOTP(token, otp) {
+  try {
+    const response = await axiosInstance.post("/auth/verify-otp", {
+      token,
+      otp,
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    return handleError(error);
+  }
+}
