@@ -143,7 +143,9 @@ export const login = async (req, res) => {
             expiresIn: "1h",
           }
         );
-        return res.status(200).json({ token, type: TokenTypes.AWAIT_MFA });
+        return res
+          .status(200)
+          .json({ token, type: TokenTypes.AWAIT_MFA, userId: user._id });
       } else {
         // Give the user an authentication token
         const token = jwt.sign(
@@ -156,7 +158,9 @@ export const login = async (req, res) => {
             expiresIn: "1h",
           }
         );
-        return res.status(200).json({ token, type: TokenTypes.AUTH });
+        return res
+          .status(200)
+          .json({ token, type: TokenTypes.AUTH, userId: user._id });
       }
     });
   } catch (err) {
