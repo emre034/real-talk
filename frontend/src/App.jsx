@@ -8,24 +8,26 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyUser from "./pages/VerifyUser";
 import ResetPassword from "./pages/ResetPassword";
-import UserProfile from "./pages/UserProfile";
+import UserSettings from "./pages/UserSettings";
 import EnterOTP from "./pages/EnterOTP";
 
 function App() {
   return (
-    <div className="App">
+    <div className="rt-app bg-gray-50 dark:bg-gray-900">
       <Router>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-email" element={<VerifyUser />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/enter-otp" element={<EnterOTP />} />
-        </Routes>
+        <div className="container mx-auto">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/verify-email" element={<VerifyUser />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/settings" element={<UserSettings />} />
+            <Route path="/enter-otp" element={<EnterOTP />} />
+          </Routes>
+        </div>
       </Router>
     </div>
   );

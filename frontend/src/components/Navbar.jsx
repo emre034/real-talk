@@ -1,22 +1,33 @@
 import { Link } from "react-router-dom";
+import { Navbar, DarkThemeToggle } from "flowbite-react";
 
-function Navbar() {
+import NavbarLink from "./NavbarLink";
+
+export default function MyNavbar() {
   return (
-    <div className="navbar">
-      <div className="navbarItem">
-        <Link to="/">Home</Link>
+    <Navbar>
+      <div className="container mx-auto flex items-center justify-between">
+        <Navbar.Brand as={Link} href="https://flowbite-react.com">
+          <img
+            src="/flowbite.svg"
+            className="mr-3 h-6 sm:h-9"
+            alt="Logo"
+          />
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+            RealTalk
+          </span>
+        </Navbar.Brand>
+        <Navbar.Toggle />
+        <div className="flex items-center space-x-8">
+          <Navbar.Collapse>
+            <NavbarLink to="/" text="Home" />
+            <NavbarLink to="/login" text="Login" />
+            <NavbarLink to="/register" text="Register" />
+            <NavbarLink to="/settings" text="Settings" />
+          </Navbar.Collapse>
+          <DarkThemeToggle />
+        </div>
       </div>
-      <div className="navbarItem">
-        <Link to="/login">Login</Link>
-      </div>
-      <div className="navbarItem">
-        <Link to="/register">Register</Link>
-      </div>
-      <div className="navbarItem">
-        <Link to="/profile">Profile</Link>
-      </div>
-    </div>
+    </Navbar>
   );
 }
-
-export default Navbar;

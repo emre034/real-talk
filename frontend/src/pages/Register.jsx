@@ -1,14 +1,17 @@
-import viteLogo from "/vite.svg";
 import { useEffect, useState } from "react";
 import { registerUser } from "../api/authService";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+
+import { HiInformationCircle } from "react-icons/hi";
+import { Alert, Button, Checkbox, Label, TextInput } from "flowbite-react";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState({});
 
   useEffect(() => {
     if (Cookies.get("authToken")) {
@@ -24,76 +27,128 @@ function Register() {
     const response = await registerUser(username, email, password);
 
     if (response.success !== false) {
-      setAlertMessage("Registration successful!");
+      setAlertMessage({
+        color: "success",
+        title: "Registration successful!",
+        message: "Check your email for a verification link.",
+      });
     } else {
       console.log(response);
-      setAlertMessage("Registration failed! " + response.error);
+      setAlertMessage({
+        color: "failure",
+        title: "Registration failed!",
+        message: response.message,
+      });
     }
   };
 
   const handleLogout = () => {
     setLoggedIn(false);
     Cookies.remove("authToken");
+    Cookies.remove("authUser");
   };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-      </div>
-      <h1>REAL TALK</h1>
       {loggedIn ? (
         <form onSubmit={handleLogout}>
-          <p>You are logged in</p>
-          <button style={{ width: "96px" }}>Logout</button>
+          <h1 className="my-5 text-2xl font-bold text-gray-900 dark:text-white">
+            Welcome
+          </h1>
+          <p className="my-5 text-gray-900 dark:text-white">
+            You are already logged in! Please log out to view this page.
+          </p>
+          <Button type="submit" style={{ width: "96px" }}>
+            Logout
+          </Button>
         </form>
       ) : (
-        <form
-          onSubmit={handleRegister}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 2fr",
-              gap: "0.75em",
-              textAlign: "right",
-            }}
-          >
-            <label>Username:</label>
-            <input type="text" onChange={(e) => setUsername(e.target.value)} />
-
-            <label>Password:</label>
-            <input
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <label>Email:</label>
-            <input type="text" onChange={(e) => setEmail(e.target.value)} />
+        <div className="flex flex-col items-center justify-center p-8">
+          <div className="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
+            <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                Create an account
+              </h1>
+              <form
+                className="flex max-w-md flex-col gap-4"
+                onSubmit={handleRegister}
+              >
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="email" value="Email" />
+                  </div>
+                  <TextInput
+                    id="email"
+                    type="email"
+                    placeholder="yourname@site.com"
+                    required
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="username" value="Username" />
+                  </div>
+                  <TextInput
+                    id="username"
+                    type="text"
+                    placeholder="username"
+                    required
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="password" value="Password" />
+                  </div>
+                  <TextInput
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    required
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="terms" required />
+                  <Label htmlFor="terms">
+                    I accept the{" "}
+                    <Link
+                      className="ms-auto text-sm text-blue-700 hover:underline dark:text-blue-500"
+                      to="#"
+                    >
+                      Terms and Conditions
+                    </Link>
+                  </Label>
+                </div>
+                <Button type="submit">Create account</Button>
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Already have an account?{" "}
+                    <Link
+                      to="/login"
+                      className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                    >
+                      Login here
+                    </Link>
+                    .
+                  </p>
+                </div>
+                {Object.keys(alertMessage).length > 0 && (
+                  <div>
+                    <Alert
+                      color={alertMessage.color}
+                      icon={alertMessage.icon || HiInformationCircle}
+                    >
+                      <span className="font-medium">{alertMessage.title}</span>{" "}
+                      {alertMessage.message}
+                    </Alert>
+                  </div>
+                )}
+              </form>
+            </div>
           </div>
-          <div
-            style={{
-              background: "red",
-              color: "white",
-              padding: "0.5em",
-              width: "100%",
-              margin: "1em",
-              minHeight: "2em",
-              borderRadius: "5px",
-              visibility: alertMessage ? "visible" : "hidden",
-            }}
-          >
-            {alertMessage}
-          </div>
-          <button style={{ width: "96px", marginTop: "1em" }}>Register</button>
-        </form>
+        </div>
       )}
     </>
   );
