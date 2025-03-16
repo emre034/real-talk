@@ -71,7 +71,7 @@ export const getUserById = async (req, res) => {
 };
 
 /**
- * PUT /users/:id
+ * PATCH /users/:id
  *
  * Update a user by ID.
  *
@@ -84,7 +84,8 @@ export const getUserById = async (req, res) => {
  * {
  *  username: string,
  *  email: string,
- *  password: string
+ *  password: string,
+ *  ...
  * }
  */
 export const updateUserById = async (req, res) => {
@@ -117,13 +118,15 @@ export const updateUserById = async (req, res) => {
 
     // Update the new user object with the validated fields
     const updatedUser = {
-      ...user,
       ...matchedData(req),
     };
 
+    console.log(req.body);
+
     // Hash password
-    const hash = await bcrypt.hash(updatedUser.password, 10);
-    updatedUser.password = hash;
+    if (updatedUser.password) {
+      updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
+    }
 
     // Update user in database
     await userCollection.updateOne(
