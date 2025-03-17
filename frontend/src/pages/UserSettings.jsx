@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { decode } from "html-entities";
 import QRCode from "react-qr-code";
 import _ from "lodash";
-
 import deepDiff from "../util/deepDiff";
 import deepCopy from "../util/deepCopy";
 
