@@ -59,6 +59,7 @@ export const getFollowedUsersById = async (req, res) => {
     const db = await connectDB();
     const { id } = req.params;
     const { viewer_id } = req.query;
+    const viewerId = viewer_id || id;
 
     const followed = await db
       .collection("followers")
@@ -73,7 +74,7 @@ export const getFollowedUsersById = async (req, res) => {
 
     const followed_by_viewer = await db
       .collection("followers")
-      .find({ follower_id: new ObjectId(viewer_id) })
+      .find({ follower_id: new ObjectId(viewerId) })
       .toArray();
     const followed_by_viewer_ids = followed_by_viewer.map((f) => f.followed_id);
 
@@ -137,12 +138,8 @@ export const isUserFollowing = async (req, res) => {
       follower_id: new ObjectId(follower_id),
       followed_id: new ObjectId(followed_id),
     };
-    try {
-      const count = await db.collection("followers").countDocuments(filter);
-      res.status(200).json(count > 0);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    const count = await db.collection("followers").countDocuments(filter);
+    res.status(200).json(count > 0);
   } catch (err) {
     console.error("Check following error:", err);
     return res.status(500).json({ error: err.message });
@@ -206,12 +203,8 @@ export const unfollowUser = async (req, res) => {
       followed_id: new ObjectId(followed_id),
     };
 
-    try {
-      const result = await db.collection("followers").deleteOne(followToDelete);
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    const result = await db.collection("followers").deleteOne(followToDelete);
+    res.status(200).json(result);
   } catch (err) {
     console.error("Unfollow user error:", err);
     return res.status(500).json({ error: err.message });
