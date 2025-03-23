@@ -23,6 +23,7 @@ const validatorMap = {
 
   user_update: () => checkSchema(userUpdateSchema),
   follows: () => checkSchema(followIdSchema),
+
   // Add additional fields as needed
 };
 
