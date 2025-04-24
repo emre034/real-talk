@@ -1,13 +1,14 @@
 import { connectDB } from "../database/connection.js";
 import { ObjectId } from "mongodb";
 import { ErrorMsg, SuccessMsg } from "../services/responseMessages.js";
+import { createNotification } from "./notifications.js";
 
 export const createComment = async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
+    //postId
     const { userId, content } = req.body;
-
     // TODO: userId should be passed from auth middleware when implemented
 
     // Check if post exists
@@ -29,12 +30,12 @@ export const createComment = async (req, res) => {
     };
 
     // Add comment
-    const result = await db.collection("posts").updateOne(
-      { _id: new ObjectId(id) },
-      { $push: { comments: comment } }
-    );
+    const result = await db
+      .collection("posts")
+      .updateOne({ _id: new ObjectId(id) }, { $push: { comments: comment } });
 
     if (result.acknowledged) {
+      createNotification(post.user_id, userId, "comment");
       return res.status(201).json({ message: SuccessMsg.COMMENT_CREATE_OK });
     } else {
       return res.sendStatus(500);
@@ -122,8 +123,16 @@ export const updateComment = async (req, res) => {
 
     // Update comment
     const result = await db.collection("posts").updateOne(
-      { _id: new ObjectId(id), "comments.comment_id": new ObjectId(commentId) },
-      { $set: { "comments.$.content": content, "comments.$.updated_at": new Date() } }
+      {
+        _id: new ObjectId(id),
+        "comments.comment_id": new ObjectId(commentId),
+      },
+      {
+        $set: {
+          "comments.$.content": content,
+          "comments.$.updated_at": new Date(),
+        },
+      }
     );
 
     if (result.acknowledged) {
@@ -161,10 +170,12 @@ export const deleteComment = async (req, res) => {
     }
 
     // Delete comment
-    const result = await db.collection("posts").updateOne(
-      { _id: new ObjectId(id) },
-      { $pull: { comments: { comment_id: new ObjectId(commentId) } } }
-    );
+    const result = await db
+      .collection("posts")
+      .updateOne(
+        { _id: new ObjectId(id) },
+        { $pull: { comments: { comment_id: new ObjectId(commentId) } } }
+      );
 
     if (result.acknowledged) {
       return res.status(204).json({ message: SuccessMsg.COMMENT_DELETE_OK });
