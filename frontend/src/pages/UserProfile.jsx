@@ -15,6 +15,7 @@ import { Spinner } from "flowbite-react";
 import UserInteractionButtons from "../components/UserInteractionButtons.jsx";
 import { useCacheUpdater } from "../hooks/useUserCache";
 import { getSafeObject } from "../util/defaultObjects.js";
+import DailyPostCounter from "../components/DailyPostCounter";
 import SuggestedUsers from "../components/SuggestedUsers.jsx";
 
 function UserProfile() {
@@ -102,6 +103,22 @@ function UserProfile() {
   const cardStyle =
     "p-4 bg-white rounded-md shadow dark:border dark:border-gray-700 dark:bg-gray-800";
 
+  // Filter posts to get only today's posts
+  const getTodayPosts = () => {
+    if (!Array.isArray(posts)) return 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of day
+
+    return posts.filter((post) => {
+      const postDate = new Date(post.created_at);
+      postDate.setHours(0, 0, 0, 0); // Set to start of day
+
+      // Compare the dates (ignoring time)
+      return postDate.getTime() === today.getTime();
+    }).length;
+  };
+
   if (loading) return <Spinner className="p-16 text-center" size="xl" />;
 
   return isUserFound ? (
@@ -109,7 +126,7 @@ function UserProfile() {
       <div className="col-span-2" />
       <div className="col-span-3 text-lg text-gray-900 dark:text-white">
         <div
-          className={`grid grid-cols-4 items-center justify-center ${cardStyle}`}
+          className={`mb-4 grid grid-cols-4 items-center justify-center ${cardStyle}`}
         >
           <div className="col-span-4 flex items-start sm:col-span-1">
             <img
@@ -182,29 +199,35 @@ function UserProfile() {
           </div>
         </div>
 
-        <div className="">
-          <div className="my-3 rounded-md bg-white p-2 text-center shadow dark:border dark:border-gray-700 dark:bg-gray-800">
-            Posts Today: 0/1
-          </div>
-
-          {viewer._id == userData._id && (
-            <div
-              data-testid="profile-post-composer"
-              className={`mb-3 p-2 ${cardStyle}`}
-            >
-              <Composer onSubmit={fetchUserData} mode="createPost" />
-            </div>
-          )}
-
-          {posts?.map((post) => (
-            <Post
-              key={post._id}
-              post={post}
-              viewer={viewer}
-              onDelete={onPostDeleted}
-            />
-          ))}
+        <div className="mb-4 rounded-md bg-white p-2 text-center shadow dark:border dark:border-gray-700 dark:bg-gray-800">
+          <DailyPostCounter posts={getTodayPosts()} />
         </div>
+
+        {viewer._id == userData._id && getTodayPosts() < 1 && (
+          <div
+            data-testid="profile-post-composer"
+            className={`mb-4 p-2 ${cardStyle}`}
+          >
+            <Composer onSubmit={fetchUserData} mode="createPost" />
+          </div>
+        )}
+
+        {viewer._id == userData._id && getTodayPosts() >= 1 && (
+          <div
+            className={`mb-4 p-2 ${cardStyle} text-center text-red-500 dark:text-red-400`}
+          >
+            You've reached your daily post limit. Try again tomorrow.
+          </div>
+        )}
+
+        {posts?.map((post) => (
+          <Post
+            key={post._id}
+            post={post}
+            viewer={viewer}
+            onDelete={onPostDeleted}
+          />
+        ))}
       </div>
       <div className="col-span-2">
         <SuggestedUsers />
