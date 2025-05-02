@@ -10,10 +10,8 @@ import { getPostByQuery } from "../api/postService.js";
 import { getUserById } from "../api/userService.js";
 import useAuth from "../hooks/useAuth.js";
 import Post from "../components/Post.jsx";
-import Composer from "../components/Composer.jsx";
 import { Spinner } from "flowbite-react";
 import UserInteractionButtons from "../components/UserInteractionButtons.jsx";
-import { useCacheUpdater } from "../hooks/useUserCache";
 import { getSafeObject } from "../util/defaultObjects.js";
 import DailyPostCounter from "../components/DailyPostCounter";
 import SuggestedUsers from "../components/SuggestedUsers.jsx";
@@ -31,8 +29,6 @@ function UserProfile() {
   const [posts, setPosts] = useState(false);
   const paramId = useParams().id;
 
-  const updateCache = useCacheUpdater();
-
   useEffect(() => {
     const fetchUser = async () => {
       const user = await auth.getUser();
@@ -41,13 +37,6 @@ function UserProfile() {
     };
     fetchUser();
   }, [auth]);
-
-  useEffect(() => {
-    if (viewer) {
-      const userId = paramId === "me" ? viewer._id : paramId;
-      updateCache([userId]);
-    }
-  }, [viewer, updateCache, paramId]);
 
   const fetchUserData = useCallback(async () => {
     if (!viewer) return;
@@ -122,7 +111,7 @@ function UserProfile() {
   if (loading) return <Spinner className="p-16 text-center" size="xl" />;
 
   return isUserFound ? (
-    <div className="m-4 grid w-full grid-cols-7 gap-6">
+    <div className="mx-4 mt-4 grid w-full grid-cols-7 gap-6">
       <div className="col-span-2" />
       <div className="col-span-3 text-lg text-gray-900 dark:text-white">
         <div

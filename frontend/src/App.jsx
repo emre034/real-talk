@@ -15,6 +15,9 @@ import PublicLayout from "./layouts/PublicLayout";
 import PrivateLayout from "./layouts/PrivateLayout";
 
 import Home from "./pages/Home";
+import Feed from "./pages/Feed";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyUser from "./pages/VerifyUser";
@@ -36,13 +39,12 @@ function App() {
         className="rt-app bg-gray-50 dark:bg-gray-900"
         style={{ filter: `grayscale(${grayscale})` }}
       >
-      <Router>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <div className="container min-w-full">
-
-              {/* Grayscale dev slider — remove in production */}
-              {/*
+        <Router>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <div className="container min-w-full">
+                {/* Grayscale dev slider — remove in production */}
+                {/*
               <div className="p-4">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Grayscale Level: {grayscale}
@@ -58,29 +60,35 @@ function App() {
                 />
               </div>
               */}
-              <Routes>
-                <Route element={<PublicLayout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/landing" element={<Landing />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/verify-email" element={<VerifyUser />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                </Route>
-
-                <Route element={<PrivateLayout />}>
-                  <Route path="/settings" element={<UserSettings />} />
-                  <Route path="/enter-otp" element={<EnterOTP />} />
-                  <Route path="/profile/:id" element={<UserProfile />} />
-                  <Route path="/user/:id/followers" element={<Followers />} />
-                  <Route path="/user/:id/following" element={<Following />} />
-                  <Route path="/post/:id" element={<SinglePost />} />
-                  <Route path="/notifications" element={<NotificationsPage />} />
-                </Route>
-              </Routes>
-            </div>
-          </QueryClientProvider>
-        </AuthProvider>
-      </Router>
+                <Routes>
+                  <Route element={<PublicLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/landing" element={<Landing />} />
+                    <Route
+                      path="/forgot-password"
+                      element={<ForgotPassword />}
+                    />
+                    <Route path="/verify-email" element={<VerifyUser />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                  </Route>
+                  <Route element={<PrivateLayout />}>
+                    <Route path="/feed" element={<Feed />} />
+                    <Route path="/settings" element={<UserSettings />} />
+                    <Route path="/enter-otp" element={<EnterOTP />} />
+                    <Route path="/profile/:id" element={<UserProfile />} />
+                    <Route path="/user/:id/followers" element={<Followers />} />
+                    <Route path="/user/:id/following" element={<Following />} />
+                    <Route path="/post/:id" element={<SinglePost />} />
+                    <Route
+                      path="/notifications"
+                      element={<NotificationsPage />}
+                    />
+                  </Route>
+                </Routes>
+              </div>
+            </QueryClientProvider>
+          </AuthProvider>
+        </Router>
       </div>
     </GrayscaleContext.Provider>
   );

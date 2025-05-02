@@ -19,9 +19,7 @@ export default function MyNavbar() {
         <Navbar.Toggle />
         <div className="flex items-center space-x-6">
           <Navbar.Collapse>
-            <NavbarLink
-              to="/"
-              text = "Home">
+            <NavbarLink to="/" text="Home">
               <img src="/realtalk.svg" alt="Home" />
             </NavbarLink>
             {auth.loggedIn ? (

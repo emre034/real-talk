@@ -190,7 +190,18 @@ function Composer({ onSubmit, onCancel, target, mode }) {
           break;
       }
       if (response.success !== false) {
-        onSubmit(sanitizedContent);
+        if (mode === "createPost") {
+          onSubmit({
+            ...response.data,
+            poster: {
+              _id: user._id,
+              username: user.username,
+              profile_picture: user.profile_picture,
+            },
+          });
+        } else {
+          onSubmit(sanitizedContent);
+        }
 
         if (mode === "createPost" || mode === "createComment") {
           setContent("");
@@ -230,6 +241,7 @@ function Composer({ onSubmit, onCancel, target, mode }) {
             --baseTextContrast: #374151;
             --baseBg: none;
             --baseBgActive: #94a3b8;
+            border: 1px solid rgb(55 65 81);
           }
 
           .dark  .mdxeditor {
@@ -270,7 +282,7 @@ function Composer({ onSubmit, onCancel, target, mode }) {
           onChange={handleContentChange}
           autoFocus={true}
           placeholder="Write something..."
-          className="w-full rounded-md border border-gray-700"
+          className="w-full rounded-md"
           plugins={
             isPost
               ? [
