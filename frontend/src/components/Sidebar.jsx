@@ -19,11 +19,11 @@ export default function Sidebar({ children }) {
 
   return (
     <aside className="h-screen">
-      <nav className="flex h-full flex-col bg-white shadow-md dark:bg-gray-800">
-        <div className="flex items-center justify-between p-4 pb-2">
+      <nav className="h-full flex flex-col bg-white dark:bg-gray-800 border-r shadow-sm">
+        <div className="p-4 pb-2 flex justify-between items-center">
           <div
-            className={`flex items-center overflow-hidden transition-all ${
-              expanded ? "ml-2 w-auto" : "w-0"
+            className={`overflow-hidden transition-all flex items-center ${
+              expanded ? "w-auto ml-2" : "w-0"
             }`}
           >
             <DarkThemeToggle />
