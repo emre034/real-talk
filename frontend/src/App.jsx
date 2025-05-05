@@ -31,6 +31,8 @@ import Network from "./pages/Network";
 import SinglePost from "./pages/SinglePost";
 import NotificationsPage from "./pages/Notifications";
 import Admin from "./pages/Admin";
+import Trending from "./pages/Trending";
+
 function App() {
   const [grayscale, setGrayscale] = useState(0);
 
@@ -72,6 +74,7 @@ function App() {
                       element={<NotificationsPage />}
                     />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/trending" element={<Trending />} />
                   </Route>
                 </Routes>
               </div>
