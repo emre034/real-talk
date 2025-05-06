@@ -9,11 +9,18 @@ import { TabItem, Tabs } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 import _ from "lodash";
+
+/**
+ * Admin dashboard page for managing user reports
+ * Provides interfaces for viewing and handling active/resolved reports
+ */
 function Admin() {
+  // State for admin check and reports data
   const auth = useAuth();
   const [reports, setReports] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Check admin status and load reports
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -32,6 +39,7 @@ function Admin() {
     fetchUser();
   }, [auth]);
 
+  // Load reports from API
   const fetchReports = async () => {
     try {
       const response = await getReports();
@@ -45,6 +53,7 @@ function Admin() {
     }
   };
 
+  // Filter and sort reports by status
   const resolvedReports = reports
     .filter((report) => report.status === "resolved")
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -53,13 +62,13 @@ function Admin() {
     .filter((report) => report.status === "active")
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
+  // Report action handlers
   const getTargetLink = (report) => {
     if (report.targetType === "user") {
       return `/profile/${report.target}`;
     } else if (report.targetType === "post") {
       return `/post/${report.target}`;
     } else if (report.targetType === "comment") {
-      console.l;
       const { post_id, comment_id } = report.target;
       return `/post/${post_id}?comment=${comment_id}`;
     }

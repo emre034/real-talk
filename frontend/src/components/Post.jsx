@@ -15,14 +15,24 @@ import PostCarousel from "./PostCarousel";
 import ReportWindow from "./ReportWindow";
 import { banTarget } from "../api/adminService";
 
+/**
+ * Post component displays a social media post with interactions
+ * @param {Object} post - Post data including content and metadata
+ * @param {Object} viewer - Current user viewing the post
+ * @param {Function} onDelete - Callback when post is deleted
+ * @param {string} focusedComment - ID of comment to highlight
+ */
 function Post({ post, viewer, onDelete, focusedComment }) {
+  // Manage post data and UI states
   const [postData, setPostData] = useState(post);
   const [commentsShown, setCommentsShown] = useState(!!focusedComment || false);
   const [mode, setMode] = useState("view");
   const [isReporting, setIsReporting] = useState(false);
 
+  // Cache updater for user data
   const updateCache = useCacheUpdater(postData._id);
 
+  // Update user cache when comments are loaded
   useEffect(() => {
     if (postData.comments && commentsShown) {
       const commentorIds = postData.comments.map((comment) => comment.user_id);
@@ -30,6 +40,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
     }
   }, [postData, commentsShown, updateCache]);
 
+  // Post interaction handlers
   const handleLike = async (postId, isLiked) => {
     if (!viewer) return;
 
@@ -49,6 +60,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
       });
   };
 
+  // Fetch and update comments for the post
   const fetchComments = async () => {
     getPostComments(postData._id)
       .then((response) => {
@@ -64,6 +76,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
       });
   };
 
+  // Toggle comments visibility and fetch if needed
   const handleShowComments = () => {
     const newVisibility = !commentsShown;
     setCommentsShown(newVisibility);
@@ -72,6 +85,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
     }
   };
 
+  // Post management handlers
   const handleDeletePost = async () => {
     deletePostById(postData._id)
       .then((response) => {
@@ -115,6 +129,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
     });
   };
 
+  // Admin actions
   const handleBanPost = async () => {
     try {
       if (!viewer?.is_admin) return;
@@ -135,6 +150,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
     }
   };
 
+  // Menu options based on user role
   const postOptions =
     viewer?._id === postData.user_id
       ? [
@@ -184,10 +200,12 @@ function Post({ post, viewer, onDelete, focusedComment }) {
 
   return (
     <>
+      {/* Main post container */}
       <div
         data-testid="post"
         className="col-span-4 mb-4 rounded-md bg-white p-4 text-gray-900 shadow dark:border dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
       >
+        {/* Post header with user info */}
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
             <Link to={`/profile/${postData.poster?._id}`} className="shrink-0">
@@ -218,6 +236,8 @@ function Post({ post, viewer, onDelete, focusedComment }) {
           </div>
           <DropdownMenu items={postOptions} />
         </div>
+
+        {/* Post content section */}
         {mode === "view" ? (
           <div data-testid="post-content">
             {postData.media && postData.media.length > 0 && (
@@ -251,6 +271,7 @@ function Post({ post, viewer, onDelete, focusedComment }) {
           />
         )}
 
+        {/* Post interaction buttons */}
         <div className="flex items-center justify-around space-x-4 text-sm text-gray-500 dark:text-gray-400">
           <button
             data-testid="post-like-button"
@@ -309,6 +330,8 @@ function Post({ post, viewer, onDelete, focusedComment }) {
             </button>
           </Popover>
         </div>
+
+        {/* Comments section */}
         <div>
           {commentsShown && (
             <div className="flex flex-col space-y-2 p-2">
@@ -337,6 +360,8 @@ function Post({ post, viewer, onDelete, focusedComment }) {
           )}
         </div>
       </div>
+
+      {/* Report modal */}
       <ReportWindow
         visible={isReporting}
         targetType="post"

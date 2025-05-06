@@ -11,10 +11,15 @@ import FeedLayout from "../layouts/FeedLayout.jsx";
 
 import { getLatestFeed } from "../api/feeds.js";
 
+/**
+ * Displays most recent posts in an infinite scrolling feed
+ * Includes post composer and trending/suggested user sidebars
+ */
 function Feed() {
   const auth = useAuth();
   const [viewer, setViewer] = useState(null);
 
+  // Initialize infinite scrolling feed with latest posts
   const { posts, feedLoading, hasMore, onPostDeleted, onPostCreated } =
     useScrollingFeed({
       viewer: viewer,
@@ -22,6 +27,7 @@ function Feed() {
       fetchFeedFunction: getLatestFeed,
     });
 
+  // Load viewer data on mount
   useEffect(() => {
     if (auth.loggedIn) {
       auth.getUser().then((user) => {
@@ -38,9 +44,11 @@ function Feed() {
         data-testid="profile-post-composer"
         className="mb-4 rounded-md bg-white p-4 shadow dark:border dark:border-gray-700 dark:bg-gray-800"
       >
+        {/* Create post */}
         <Composer onSubmit={onPostCreated} mode="createPost" />
       </div>
 
+      {/* Posts list */}
       {posts.map((post) => (
         <Post
           key={post._id}
@@ -50,12 +58,14 @@ function Feed() {
         />
       ))}
 
+      {/* Loading state */}
       {feedLoading && (
         <div className="p-4 text-center">
           <Spinner aria-label="Loading more posts" size="xl" />
         </div>
       )}
 
+      {/* End of feed indicator */}
       {!hasMore && !feedLoading && (
         <div className="p-4 text-center text-gray-500">
           No more posts to load.

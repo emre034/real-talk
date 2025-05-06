@@ -13,7 +13,12 @@ import {
   Datepicker,
 } from "flowbite-react";
 
+/**
+ * Registration page with email verification
+ * Handles new user account creation
+ */
 function Register() {
+  // Auth and form state
   const auth = useAuth();
   const [formData, setFormData] = useState({
     username: "",
@@ -23,6 +28,7 @@ function Register() {
   });
   const [alertMessage, setAlertMessage] = useState({});
 
+  // Handle registration submission
   const handleRegister = async (e) => {
     e.preventDefault();
     const response = await registerUser(formData);
