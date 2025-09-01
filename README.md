@@ -9,6 +9,15 @@
 
 > Social media app encouraging less screen time and more thoughtful posting.
 
+## 🎯 My Role
+
+**Frontend Developer (1 of 3) & UI/UX Designer (Solo)**
+- ✅ Frontend: Built entire application together with 2 teammates
+- ✅ UI/UX: Solely responsible for all design work (mockups, wireframes, design system)
+- ✅ Collaborative development through pair programming and code reviews
+- ✅ Equal contribution to all frontend features as a team
+- 📄 [See detailed contribution](./MY_CONTRIBUTION.md)
+
 ## About the Project
 
 ...
